@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+
+	"github.com/Ayobami6/schema_dump/utils"
 )
 
 type Column struct {
@@ -280,6 +282,41 @@ func join(slice []string, sep string) string {
 		}
 	}
 	return out
+}
+
+// transformToORMModel takes a language and transforms the SQL schema to the ORM model
+// It uses the AzureAIClient to send a request to the Azure OpenAI API
+func TransformToORMModel(lang, tableName string, db *sql.DB) error {
+	// Generate the schema
+	dumpTableSchema(db, tableName)
+	// Read the schema from the file
+	schema, err := os.ReadFile("schema.sql")
+	if err != nil {
+		return fmt.Errorf("failed to read schema file: %w", err)
+	}
+	// Create the prompt
+	prompt := fmt.Sprintf("Transform the following SQL schema to %s ORM model:\n%s", lang, string(schema))
+	// Create the AzureAIClient
+	client := utils.NewAzureAIClient(os.Getenv("AZURE_OPENAI_ENDPOINT"), os.Getenv("AZURE_OPENAI_API_KEY"))
+	// Send the request
+	response, err := client.CreateCompletions(prompt)
+	if err != nil {
+		log.Printf("Error creating completions: %v", err)
+		return fmt.Errorf("failed to create completions: %w", err)
+	}
+	// Write the response to a file
+	ormModelFile, err := os.Create(fmt.Sprintf("orm_model.%s", lang))
+	if err != nil {
+		log.Printf("Error creating ORM model file: %v", err)
+		return fmt.Errorf("failed to create ORM model file: %w", err)
+	}
+	_, err = ormModelFile.WriteString(response.(string))
+	if err != nil {
+		log.Printf("Error writing to ORM model file: %v", err)
+		return fmt.Errorf("failed to write to ORM model file: %w", err)
+	}
+	return nil
+
 }
 
 func Tables(sb *sql.DB) []string {

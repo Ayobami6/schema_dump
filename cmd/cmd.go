@@ -88,7 +88,7 @@ var listTableCommand = &cobra.Command{
 	},
 }
 
-var transform = &cobra.Command{
+var transformCommand = &cobra.Command{
 	Use:   "transform",
 	Short: "Transform SQL schema to a Language Model",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -101,6 +101,21 @@ var transform = &cobra.Command{
 			log.Fatalf("Failed to connect: %v", err)
 		}
 		defer db.Close()
+		supportedLangs := map[string]bool{
+			"python":     true,
+			"typescript": true,
+			"java":       true,
+			"rust":       true,
+			"go":         true,
+		}
+		if _, ok := supportedLangs[lang]; !ok {
+			log.Fatalf("Language %s is not supported", lang)
+		}
+		err = internal.TransformToORMModel(lang, tableName, db)
+		if err != nil {
+			log.Fatalf("Failed to transform schema: %v", err)
+		}
+		log.Printf("Schema transformed to %s ORM model", lang)
 
 	},
 }
@@ -108,6 +123,7 @@ var transform = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(dumpSchemaCmd)
 	RootCmd.AddCommand(listTableCommand)
+	RootCmd.AddCommand(transformCommand)
 
 	listTableCommand.Flags().StringVar(&dbType, "db", "", "Database type (e.g., postgres)")
 	listTableCommand.Flags().StringVar(&dbURL, "url", "", "Database connection URL")
@@ -115,9 +131,17 @@ func init() {
 	dumpSchemaCmd.Flags().StringVar(&dbType, "db", "", "Database type (e.g., postgres)")
 	dumpSchemaCmd.Flags().StringVar(&dbURL, "url", "", "Database connection URL")
 	dumpSchemaCmd.Flags().StringVar(&tableName, "table", "", "Table name to dump (optional)")
+	transformCommand.Flags().StringVar(&dbType, "db", "", "Database type (e.g., postgres)")
+	transformCommand.Flags().StringVar(&dbURL, "url", "", "Database connection URL")
+	transformCommand.Flags().StringVar(&tableName, "table", "", "Table name to dump (optional)")
+	transformCommand.Flags().StringVar(&lang, "lang", "", "Language to transform to (e.g., python, typescript, java, rust, go)")
 
 	dumpSchemaCmd.MarkFlagRequired("db")
 	dumpSchemaCmd.MarkFlagRequired("url")
 	listTableCommand.MarkFlagRequired("db")
 	listTableCommand.MarkFlagRequired("url")
+	transformCommand.MarkFlagRequired("db")
+	transformCommand.MarkFlagRequired("url")
+	transformCommand.MarkFlagRequired("lang")
+	transformCommand.MarkFlagRequired("table")
 }

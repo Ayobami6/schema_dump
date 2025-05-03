@@ -101,8 +101,8 @@ func (c *AzureAIClient) CreateCompletions(prompt string) (any, error) {
 	}
 	// Create a new request
 	req := NewRequest("POST", c.endpoint, body, map[string]interface{}{
-		"Content-Type": "application/json",
-		"api-key":      c.apiKey,
+		"Content-Type":   "application/json",
+		"Authorization:": fmt.Sprintf("Bearer %s", c.apiKey),
 	})
 	response, err := req.Send()
 	if err != nil {
