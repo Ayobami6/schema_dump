@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 )
 
 type Column struct {
@@ -51,18 +50,17 @@ func dumpTableSchema(db *sql.DB, tableName string) {
 		}
 
 		// split the table to a slice and pick the last
-		parts := strings.Split(table, "_")
-		table = parts[len(parts)-1]
+		// parts := strings.Split(table, "_")
+		// table = parts[len(parts)-1]
 
-		if table != tableName {
-			continue
+		if table == tableName {
+			schema[table] = append(schema[table], Column{
+				ColumnName: colName,
+				DataType:   dataType,
+				IsNullable: nullable,
+			})
 		}
 
-		schema[table] = append(schema[table], Column{
-			ColumnName: colName,
-			DataType:   dataType,
-			IsNullable: nullable,
-		})
 	}
 
 	outFile, err := os.Create("schema.sql")
@@ -114,6 +112,8 @@ func dumpTableSchema(db *sql.DB, tableName string) {
 		if err := fkRows.Scan(&fk.SourceTable, &fk.SourceColumn, &fk.TargetTable, &fk.TargetColumn, &fk.ConstraintName); err != nil {
 			log.Fatal(err)
 		}
+		fmt.Println("lets see the source table: ", fk.SourceTable)
+
 		foreignKeys[fk.SourceTable] = append(foreignKeys[fk.SourceTable], fk)
 	}
 
@@ -285,4 +285,23 @@ func join(slice []string, sep string) string {
 		}
 	}
 	return out
+}
+
+func Tables(sb *sql.DB) []string {
+	rows, err := sb.Query("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	var tables []string
+	for rows.Next() {
+		var table string
+		if err := rows.Scan(&table); err != nil {
+			log.Fatal(err)
+		}
+		tables = append(tables, table)
+	}
+
+	return tables
 }
