@@ -101,8 +101,8 @@ func (c *AzureAIClient) CreateCompletions(prompt string) (any, error) {
 	}
 	// Create a new request
 	req := NewRequest("POST", c.endpoint, body, map[string]interface{}{
-		"Content-Type":   "application/json",
-		"Authorization:": fmt.Sprintf("Bearer %s", c.apiKey),
+		"Content-Type":  "application/json",
+		"Authorization": fmt.Sprintf("Bearer %s", c.apiKey),
 	})
 	response, err := req.Send()
 	if err != nil {
@@ -115,7 +115,6 @@ func (c *AzureAIClient) CreateCompletions(prompt string) (any, error) {
 		log.Printf("Error decoding response: %v", err)
 		return nil, err
 	}
-	fmt.Println("Response: ", data)
 	// Return the response body
 	return data, nil
 

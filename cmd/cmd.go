@@ -102,11 +102,11 @@ var transformCommand = &cobra.Command{
 		}
 		defer db.Close()
 		supportedLangs := map[string]bool{
-			"python":     true,
-			"typescript": true,
-			"java":       true,
-			"rust":       true,
-			"go":         true,
+			"py":   true,
+			"ts":   true,
+			"java": true,
+			"rs":   true,
+			"go":   true,
 		}
 		if _, ok := supportedLangs[lang]; !ok {
 			log.Fatalf("Language %s is not supported", lang)

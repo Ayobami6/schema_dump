@@ -305,12 +305,12 @@ func TransformToORMModel(lang, tableName string, db *sql.DB) error {
 		return fmt.Errorf("failed to create completions: %w", err)
 	}
 	// Write the response to a file
-	ormModelFile, err := os.Create(fmt.Sprintf("orm_model.%s", lang))
+	ormModelFile, err := os.Create("orm_model.md")
 	if err != nil {
 		log.Printf("Error creating ORM model file: %v", err)
 		return fmt.Errorf("failed to create ORM model file: %w", err)
 	}
-	_, err = ormModelFile.WriteString(response.(string))
+	_, err = ormModelFile.WriteString(response.(map[string]interface{})["choices"].([]interface{})[0].(map[string]interface{})["message"].(map[string]interface{})["content"].(string))
 	if err != nil {
 		log.Printf("Error writing to ORM model file: %v", err)
 		return fmt.Errorf("failed to write to ORM model file: %w", err)
