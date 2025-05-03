@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/Ayobami6/schema_dump/cmd"
+	_ "github.com/joho/godotenv/autoload"
 	_ "github.com/lib/pq"
 )
 

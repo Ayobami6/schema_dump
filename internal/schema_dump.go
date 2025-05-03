@@ -108,7 +108,6 @@ func dumpTableSchema(db *sql.DB, tableName string) {
 		if err := fkRows.Scan(&fk.SourceTable, &fk.SourceColumn, &fk.TargetTable, &fk.TargetColumn, &fk.ConstraintName); err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println("lets see the source table: ", fk.SourceTable)
 
 		foreignKeys[fk.SourceTable] = append(foreignKeys[fk.SourceTable], fk)
 	}

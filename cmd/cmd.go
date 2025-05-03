@@ -14,6 +14,7 @@ var (
 	dbType    string
 	dbURL     string
 	tableName string
+	lang      string
 )
 
 var RootCmd = &cobra.Command{
@@ -83,6 +84,23 @@ var listTableCommand = &cobra.Command{
 			log.Fatalf("Failed to write to file: %v", err)
 		}
 		log.Println("Tables dumped to tables.json")
+
+	},
+}
+
+var transform = &cobra.Command{
+	Use:   "transform",
+	Short: "Transform SQL schema to a Language Model",
+	Run: func(cmd *cobra.Command, args []string) {
+		if dbType != "postgres" {
+			log.Fatalf("Only postgres is supported for now")
+		}
+
+		db, err := sql.Open("postgres", dbURL)
+		if err != nil {
+			log.Fatalf("Failed to connect: %v", err)
+		}
+		defer db.Close()
 
 	},
 }
