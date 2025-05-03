@@ -49,10 +49,6 @@ func dumpTableSchema(db *sql.DB, tableName string) {
 			log.Fatal(err)
 		}
 
-		// split the table to a slice and pick the last
-		// parts := strings.Split(table, "_")
-		// table = parts[len(parts)-1]
-
 		if table == tableName {
 			schema[table] = append(schema[table], Column{
 				ColumnName: colName,
