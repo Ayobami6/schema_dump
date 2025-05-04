@@ -33,4 +33,13 @@ Given a database URL and a specific table, this tool will:
 ---
 
 ## 📦 Installation
+```sh
+wget https://raw.githubusercontent.com/Ayobami6/schema_dump/refs/heads/master/install.sh
+```
 
+```sh
+chmod 711 install.sh
+./install.sh
+```
+
+## 📼 Demo
