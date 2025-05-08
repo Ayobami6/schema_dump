@@ -43,3 +43,7 @@ chmod 711 install.sh
 ```
 
 ## 📼 Demo
+
+
+https://github.com/user-attachments/assets/e75ec66a-a487-4ba3-b03b-63cf712376bd
+
