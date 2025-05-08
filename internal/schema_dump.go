@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"os"
 	"runtime"
-	"time"
 
 	"github.com/Ayobami6/schema_dump/utils"
 	"github.com/zalando/go-keyring"
@@ -310,46 +309,46 @@ func TransformToORMModel(lang, tableName string, db *sql.DB) error {
 		// get token from keychain
 		token, err = keyring.Get(serviceName, osName)
 		if err != nil {
-			log.Printf("Error getting token from keychain: %v\n", err)
+			// log.Printf("Error getting token from keychain: %v\n", err)
 			if err == keyring.ErrNotFound {
 				// if token is not found, fetch it from the token service
 				token, err = FetchToken()
 				if err != nil {
-					log.Printf("Error fetching token: %v\n", err)
+					// log.Printf("Error fetching token: %v\n", err)
 					return fmt.Errorf("failed to fetch token: %w", err)
 				}
 				// save the token keychain
 				err = keyring.Set(serviceName, osName, token)
 				if err != nil {
-					log.Printf("Error saving token to keychain: %v\n", err)
+					// log.Printf("Error saving token to keychain: %v\n", err)
 					return fmt.Errorf("failed to save token to keychain: %w", err)
 				}
 				// get the api key
 				apiKey, err = FetchAPIKey(token)
 				if err != nil {
-					log.Printf("Error fetching api key: %v\n", err)
+					// log.Printf("Error fetching api key: %v\n", err)
 					return fmt.Errorf("failed to fetch api key: %w", err)
 				}
 				err = keyring.Set("apiKey", osName, apiKey)
 				if err != nil {
-					log.Printf("Error saving api key to keychain: %v\n", err)
+					// log.Printf("Error saving api key to keychain: %v\n", err)
 					return fmt.Errorf("failed to save api key to keychain: %w", err)
 				}
 				// set add the api key to the keyring
 			} else {
-				log.Printf("Error getting token from keychain: %v\n", err)
+				// log.Printf("Error getting token from keychain: %v\n", err)
 				return fmt.Errorf("failed to get token from keychain: %w", err)
 			}
 
 		}
 		apiKey, err = FetchAPIKey(token)
 		if err != nil {
-			log.Printf("Error fetching api key: %v\n", err)
+			// log.Printf("Error fetching api key: %v\n", err)
 			return fmt.Errorf("failed to fetch api key: %w", err)
 		}
 		err = keyring.Set("apiKey", osName, apiKey)
 		if err != nil {
-			log.Printf("Error saving api key to keychain: %v\n", err)
+			// log.Printf("Error saving api key to keychain: %v\n", err)
 			return fmt.Errorf("failed to save api key to keychain: %w", err)
 		}
 	}
@@ -499,7 +498,7 @@ func FetchToken() (string, error) {
 		return token, nil
 	case err := <-tokenError:
 		return "", err
-	case <-time.After(5 * time.Second):
-		return "", fmt.Errorf("timeout fetching token")
+		// case <-time.After(5 * time.Second):
+		// 	return "", fmt.Errorf("timeout fetching token")
 	}
 }
