@@ -6,7 +6,7 @@ Supports:
 - **Go** with GORM
 - **Rust** with Diesel
 - **TypeScript** with TypeORM (NestJS)
-- **Python** with SQLAlchemy (FastAPI)
+- **Python** with SQLAlchemy (FastAPI) and Django ORM
 - **Java** with Spring Boot (JDBC)
 
 ---
@@ -47,3 +47,32 @@ chmod 711 install.sh
 
 https://github.com/user-attachments/assets/e75ec66a-a487-4ba3-b03b-63cf712376bd
 
+
+
+## Commands
+- dump-schema: Dumps SQL schema from a live database to a file Flags: --db (database type), --url (connection URL), --table (optional table name)
+- list-tables: Lists all tables in the database and outputs to a JSON file Flags: --db (database type), --url (connection URL)
+- transform: Transforms SQL schema to ORM models for various languages Flags: --db (database type), --url (connection URL), --table (table name), --lang (target language)
+Supported languages: py, ts, java, rs, go
+
+## Usage
+Usage examples:
+
+Dump schema for a particular table from a PostgreSQL database to a `schema.sql` in th current directory:
+```
+schema dump-schema --db postgres --url "postgresql://user:password@localhost:5432/dbname" --table users
+```
+Dump schema for all tables from a PostgreSQL database to a `schema.sql` in th current directory:
+```
+schema dump-schema --db postgres --url "postgresql://user:password@localhost:5432/dbname"
+```
+
+List all tables in a database to a `tables.json` in the current directory:
+```
+schema list-tables --db postgres --url "postgresql://user:password@localhost:5432/dbname"
+```
+Transform a table schema to an ORM model:
+```
+schema transform --db postgres --url "postgresql://user:password@localhost:5432/dbname" --table users --lang py
+```
+All commands require the --db and --url flags. The transform command additionally requires --table and --lang flags.
