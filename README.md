@@ -60,19 +60,19 @@ Usage examples:
 
 Dump schema for a particular table from a PostgreSQL database to a `schema.sql` in th current directory:
 ```
-schema dump-schema --db postgres --url "postgresql://user:password@localhost:5432/dbname" --table users
+schema dump-schema --db postgres --url "postgresql://user:password@localhost:5432/dbname?sslmode=disable" --table users
 ```
 Dump schema for all tables from a PostgreSQL database to a `schema.sql` in th current directory:
 ```
-schema dump-schema --db postgres --url "postgresql://user:password@localhost:5432/dbname"
+schema dump-schema --db postgres --url "postgresql://user:password@localhost:5432/dbname?sslmode=disable"
 ```
 
 List all tables in a database to a `tables.json` in the current directory:
 ```
-schema list-tables --db postgres --url "postgresql://user:password@localhost:5432/dbname"
+schema list-tables --db postgres --url "postgresql://user:password@localhost:5432/dbname?sslmode=disable"
 ```
 Transform a table schema to an ORM model:
 ```
-schema transform --db postgres --url "postgresql://user:password@localhost:5432/dbname" --table users --lang py
+schema transform --db postgres --url "postgresql://user:password@localhost:5432/dbname?sslmode=disable" --table users --lang py
 ```
 All commands require the --db and --url flags. The transform command additionally requires --table and --lang flags.

@@ -492,7 +492,7 @@ func FetchToken() (string, error) {
 		tokenChan <- tokenResponse.Data.Token
 	}()
 
-	// Wait for result or error (or timeout if needed)
+	// Wait for result or error
 	select {
 	case token := <-tokenChan:
 		return token, nil
