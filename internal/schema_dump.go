@@ -365,7 +365,19 @@ func TransformToORMModel(lang, tableName string, db *sql.DB) error {
 	// Create the AzureAIClient
 	client := utils.NewAzureAIClient("https://models.github.ai/inference/chat/completions", apiKey)
 	// Send the request
-	response, err := client.CreateCompletions(prompt)
+	response, err, statusCode := client.CreateCompletions(prompt)
+	if statusCode == 401 {
+		// one retry if token expired
+		token, err = FetchToken()
+		if err != nil {
+			// log.Printf("Error fetching token: %v\n", err)
+			return fmt.Errorf("failed to fetch token: %w", err)
+		}
+		// refresh api key
+		apiKey, err = FetchAPIKey(token)
+		client := utils.NewAzureAIClient("https://models.github.ai/inference/chat/completions", apiKey)
+		response, err, statusCode = client.CreateCompletions(prompt)
+	}
 	if err != nil {
 		log.Printf("Error creating completions: %v", err)
 		return fmt.Errorf("failed to create completions: %w", err)
@@ -375,6 +387,11 @@ func TransformToORMModel(lang, tableName string, db *sql.DB) error {
 	if err != nil {
 		log.Printf("Error creating ORM model file: %v", err)
 		return fmt.Errorf("failed to create ORM model file: %w", err)
+	}
+	if response == nil {
+		log.Printf("Error: could not get response from Azure AI")
+		ormModelFile.Close()
+		return fmt.Errorf("response is nil")
 	}
 	_, err = ormModelFile.WriteString(response.(map[string]interface{})["choices"].([]interface{})[0].(map[string]interface{})["message"].(map[string]interface{})["content"].(string))
 	if err != nil {

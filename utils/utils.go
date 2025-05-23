@@ -83,7 +83,7 @@ func (c *AzureAIClient) GetApiKey() string {
 	return c.apiKey
 }
 
-func (c *AzureAIClient) CreateCompletions(prompt string) (any, error) {
+func (c *AzureAIClient) CreateCompletions(prompt string) (any, error, any) {
 	body := map[string]interface{}{
 		"messages": []map[string]interface{}{
 			{
@@ -107,15 +107,20 @@ func (c *AzureAIClient) CreateCompletions(prompt string) (any, error) {
 	response, err := req.Send()
 	if err != nil {
 		log.Printf("Error sending request: %v", err)
-		return nil, err
+		return nil, err, nil
+	}
+	defer response.Body.Close()
+	statusCode := response.StatusCode
+	if statusCode == 401 {
+		return nil, nil, statusCode
 	}
 	// Read the response body
 	var data map[string]interface{}
 	if err := json.NewDecoder(response.Body).Decode(&data); err != nil {
 		log.Printf("Error decoding response: %v", err)
-		return nil, err
+		return nil, err, statusCode
 	}
 	// Return the response body
-	return data, nil
+	return data, nil, statusCode
 
 }
