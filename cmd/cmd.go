@@ -143,5 +143,5 @@ func init() {
 	transformCommand.MarkFlagRequired("db")
 	transformCommand.MarkFlagRequired("url")
 	transformCommand.MarkFlagRequired("lang")
-	transformCommand.MarkFlagRequired("table")
+	// transformCommand.MarkFlagRequired("table")
 }
