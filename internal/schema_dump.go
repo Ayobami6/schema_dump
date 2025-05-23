@@ -377,6 +377,8 @@ func TransformToORMModel(lang, tableName string, db *sql.DB) error {
 		apiKey, err = FetchAPIKey(token)
 		client := utils.NewAzureAIClient("https://models.github.ai/inference/chat/completions", apiKey)
 		response, err, statusCode = client.CreateCompletions(prompt)
+		_ = keyring.Set("apiKey", osName, apiKey)
+
 	}
 	if err != nil {
 		log.Printf("Error creating completions: %v", err)
